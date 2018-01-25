@@ -2,11 +2,12 @@
 
 This script allow users to use python to interact with Microsoft Excel. 
 
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-								Methods
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++
+	Methods
++++++++++++++++++++++++
 
 Initialisation: def __init__(self, workbook_path, show = False)
+
 	Input: 
 			- workbook_path = path to the excel file you want to open. e.g. os.path.join(path to excel file, excel file name).
 			- visbility = False to let excel do work in the background, true otherwise.
@@ -21,6 +22,7 @@ Initialisation: def __init__(self, workbook_path, show = False)
 =======================================================================
 
 Run macro: def RunMacro(self, macro)
+
 	Input:
 		- VBA macro name
 
@@ -32,6 +34,7 @@ Run macro: def RunMacro(self, macro)
 =======================================================================
 
 Export PDFs: ExportAsPDF(self, target_sheets, output_name, output_location)
+
 	Input:
 		- A list of sheet names to be exported together
 		- Output PDF name
@@ -45,6 +48,7 @@ Export PDFs: ExportAsPDF(self, target_sheets, output_name, output_location)
 =======================================================================
 
 Copy and Paste Values: CopyPasteAsValue(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange)
+
 	Input:
 		- src_sheet = sheet to copy from (either sheet number or sheet name)
 		- dest_book = Excel workbook to copy to path directory e.g destination = os.path.join(PATH, "example.csv")
@@ -62,11 +66,12 @@ Copy and Paste Values: CopyPasteAsValue(self, dest_sheet, src_book, src_sheet, C
 =======================================================================
 
 Deleting Data: DeleteValues(self, wk_sheet, delRange)
-			   DeleteCell(self, wk_sheet, delRange)
-			   DeleteRowVal(self, wk_sheet, delRange)
-			   DeleteRowCell(self, wk_sheet, delRange)
-			   DeleteColumnsVal(self, wk_sheet, delRange)
-			   DeleteColumnsCell(self, wk_sheet, delRange)
+	       DeleteCell(self, wk_sheet, delRange)
+	       DeleteRowVal(self, wk_sheet, delRange)
+	       DeleteRowCell(self, wk_sheet, delRange)
+	       DeleteColumnsVal(self, wk_sheet, delRange)
+	       DeleteColumnsCell(self, wk_sheet, delRange)
+	       
 	Input: (for all following delete functions)
 		- delRnage = Cells to delete as stirng e.g "A1:B7"
 		- wk_sheet = worksheet to delete from
@@ -80,6 +85,7 @@ Deleting Data: DeleteValues(self, wk_sheet, delRange)
 =======================================================================
 
 Inserting Data: insertVal(self, wk_sheet, insertRange, data)
+
 	Input:
 		- wk_sheet = worksheet to insert
 		- insertRange = location to insert
@@ -120,3 +126,4 @@ Other Functions:
   
  # Future Developments
  - Ability to add and format charts
+ - Ability to format fonts etc
