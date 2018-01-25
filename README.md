@@ -102,6 +102,7 @@ Inserting Data: insertVal(self, wk_sheet, insertRange, data)
 ======================================================================
 
 Getting a cell value: GetVal(self, wk_sheet, row, col)
+	
 	Input:
 		- wk_sheet = worksheet to get value from
 		- row, col = cell number. e.g A1 = 1, 1
