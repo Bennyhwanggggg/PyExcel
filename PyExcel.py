@@ -59,13 +59,13 @@ Export PDFs: ExportAsPDF(self, target_sheets, output_name, output_location)
 =======================================================================
 
 Copy and Paste Values: CopyPasteAsValue(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange)
+					   CopyPasteEntireCol(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
+	                   CopyPasteEntireRow(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
 	Input:
 		- src_sheet = sheet to copy from (either sheet number or sheet name)
 		- dest_book = Excel workbook to copy to path directory e.g destination = os.path.join(PATH, "example.csv")
 		- dest_sheet = Excel sheet to copy to (either sheet number or sheetname)
 		- CopyRange and PasteRange = Range to copy to as strings. e.g "A1:B7"
-		- CopyPasteEntireCol(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
-	    - CopyPasteEntireRow(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
 
 
 	Usage:
