@@ -1,10 +1,14 @@
 '''
 Authors: Benny Hwang 
 Date: 25/01/2017
-Version: 1.0
+Version: 1.1
 
 Use PyWin32 and win32com libary to interact with Excel from Python.
 
+Update v1.1 - 13/02/2018
+- Ability to create new excel file added.
+- Copy and past columns and rows added.
+- Ability to change font color and background color.
 
 '''
 from __future__ import print_function
@@ -60,6 +64,9 @@ Copy and Paste Values: CopyPasteAsValue(self, dest_sheet, src_book, src_sheet, C
 		- dest_book = Excel workbook to copy to path directory e.g destination = os.path.join(PATH, "example.csv")
 		- dest_sheet = Excel sheet to copy to (either sheet number or sheetname)
 		- CopyRange and PasteRange = Range to copy to as strings. e.g "A1:B7"
+		- CopyPasteEntireCol(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
+	    - CopyPasteEntireRow(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
+
 
 	Usage:
 	ExcelOperator(example1).CopyPastAsValue("sheet1", example2, "sheet2", "A1:A2", "B1:B2")
@@ -117,17 +124,35 @@ Getting a cell value: GetVal(self, wk_sheet, row, col)
 
 ======================================================================
 
+Setting font and cell colour: setFontColor(self, wk_sheet, row, col, colour)
+							  highlightCell(self, wk_sheet, row, col, colour)
+
+	Input:
+		- wk_sheet = worksheet of the cell you want to modify
+		- row, col = row and column number  e.g A1 = 1, 1
+		- colour to change to. See avaialble colours at the function and adjust accordingly.
+
+	Usage:
+	ExcelOperator(example1).setFontColor("sheet1", 1, 1, 3)
+
+	Expected Result: This will change cell A1 in sheet1's colour to red
+
+
+
+
 Other Functions:
 	QuitExcel(self)
 	RefreshCalculation(self)
-	CloseWorkBook(self, save = False):
-	AddWorkSheet(self, sheetname):
-	QuitExcel(self):
-	RefreshCalculation(self):
-	MakeVisible(self):
-	Hide(self):
-
-
+	CloseWorkBook(self, save = False)
+	AddWorkSheet(self, sheetname)
+	QuitExcel(self)
+	RefreshCalculation(self)
+	MakeVisible(self)
+	Hide(self)
+	Save(self)
+	SaveAs(self, fileName_With_Location)
+	NewWorkbook(self, fileName_With_Location = "new.csv")
+	turnAlerts(self, alertStatus)
 """
 
 class ExcelOperaterError(Exception):
@@ -249,6 +274,64 @@ class ExcelOperater:
 		except:
 			raise ExcelOperaterError("An error occured while copying data. Target or destination sheets may not exist.")
 
+
+	def CopyPasteEntireCol(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange):
+		try:
+			print("Copying from: \n\t{}\n\tSheet: {}\n\t\tto\n\t{}\n\tSheet: {}".format(src_book, src_sheet, self.workbook_path, dest_sheet))
+			print("Copy Column Range is: {}\nPaste Column Range is: {}\nPlease make sure the two range size match manually, otherwise not all data will be copied".format(CopyRange, PasteRange))
+			
+			dest = self._openSheet(dest_sheet)
+			target = None
+			# If not copying data within the same workbook, open the src data work book and the relevant sheet.
+			if src_book != self.workbook_path:
+				target = ExcelOperater(src_book, self.show)
+				src = target._openSheet(src_sheet)
+			else:
+				# if copying data in the same workbook but different sheet
+				if src_sheet != dest_sheet:
+					src = self._openSheet(src_sheet)
+					# if copying within the same sheet
+				else:
+					src = dest
+
+			dest.Range(PasteRange).EntireColumn.Value = src.Range(CopyRange).EntireColumn.Value
+
+			# Close the newly opened workbook if any
+			if target:
+				target.CloseWorkBook()
+
+		except:
+			raise ExcelOperaterError("An error occured while copying data. Target or destination sheets may not exist.")
+
+	def CopyPasteEntireRow(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange):
+		try:
+			print("Copying from: \n\t{}\n\tSheet: {}\n\t\tto\n\t{}\n\tSheet: {}".format(src_book, src_sheet, self.workbook_path, dest_sheet))
+			print("Copy Row Range is: {}\nPaste Row Range is: {}\nPlease make sure the two range size match manually, otherwise not all data will be copied".format(CopyRange, PasteRange))
+			
+			dest = self._openSheet(dest_sheet)
+			target = None
+			# If not copying data within the same workbook, open the src data work book and the relevant sheet.
+			if src_book != self.workbook_path:
+				target = ExcelOperater(src_book, self.show)
+				src = target._openSheet(src_sheet)
+			else:
+				# if copying data in the same workbook but different sheet
+				if src_sheet != dest_sheet:
+					src = self._openSheet(src_sheet)
+				# if copying within the same sheet
+				else:
+					src = dest
+
+			dest.Range(PasteRange).EntireRow.Value = src.Range(CopyRange).EntireRow.Value
+
+			# Close the newly opened workbook if any
+			if target:
+				target.CloseWorkBook()
+
+		except:
+			raise ExcelOperaterError("An error occured while copying data. Target or destination sheets may not exist.")
+
+
 	'''
 	Input: (for all following delete functions)
 		- delRnage = Cells to delete as stirng e.g "A1:B7"
@@ -340,6 +423,45 @@ class ExcelOperater:
 		except:
 			raise ExcelOperaterError("An error occured while getting values. Target sheet may not exist or invalid row or column number.")
 
+
+
+	def setFontColor(self, wk_sheet, row, col, colour):
+		try:
+			src = self._openSheet(wk_sheet)
+			# to add more colour refer to the excel vba colour coding colour indeices at: http://access-excel.tips/excel-vba-color-code-list/
+			if colour == 'Black':
+				src.Cells(row,col).Font.ColorIndex = 1 
+			if colour == 'Red':
+				src.Cells(row,col).Font.ColorIndex = 3 
+			if colour == 'Green':
+				src.Cells(row,col).Font.ColorIndex = 4
+			if colour == 'Blue':
+				src.Cells(row,col).Font.ColorIndex = 5 
+			if colour == 'Yellow':
+				src.Cells(row,col).Font.ColorIndex = 6
+
+		except:
+			raise ExcelOperaterError("An error occured while setting font colour. Target sheet may not exist or invalid row or column number.")
+
+	def highlightCell(self, wk_sheet, row, col, colour):
+		try:
+			src = self._openSheet(wk_sheet)
+			# to add more colour refer to the excel vba colour coding colour indeices at: http://access-excel.tips/excel-vba-color-code-list/
+			if colour == 'Black':
+				src.Cells(row,col).Interior.ColorIndex = 1 
+			if colour == 'Red':
+				src.Cells(row,col).Interior.ColorIndex = 3 
+			if colour == 'Green':
+				src.Cells(row,col).Interior.ColorIndex = 4
+			if colour == 'Blue':
+				src.Cells(row,col).Interior.ColorIndex = 5 
+			if colour == 'Yellow':
+				src.Cells(row,col).Interior.ColorIndex = 6
+
+		except:
+			raise ExcelOperaterError("An error occured while highlighting cell. Target sheet may not exist or invalid row or column number.")
+
+
 	'''
 	Other useful functions
 	'''
@@ -371,6 +493,19 @@ class ExcelOperater:
 	def Hide(self):
 		self.excelObj.Visible = False
 
+	def Save(self):
+		self.workBookObj.SaveAs(self.workbook_path)
+
+	def SaveAs(self, fileName_With_Location):
+		self.workBookObj.SaveAs(self.workbook_path)
+
+	def NewWorkbook(self, fileName_With_Location = "new.csv"):
+		new = self.excelObj.Workbooks.Add()
+		new.SaveAs(fileName_With_Location)
+		return new
+
+	def turnAlerts(self, alertStatus):
+		self.excelObj.DisplayAlerts = alertStatus
 
 
 	'''
