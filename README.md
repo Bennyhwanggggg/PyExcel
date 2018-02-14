@@ -48,6 +48,9 @@ Export PDFs: ExportAsPDF(self, target_sheets, output_name, output_location)
 =======================================================================
 
 Copy and Paste Values: CopyPasteAsValue(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange)
+		       CopyPasteEntireCol(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
+	    	       CopyPasteEntireRow(self, dest_sheet, src_book, src_sheet, CopyRange, PasteRange) (will keep formatting)
+
 
 	Input:
 		- src_sheet = sheet to copy from (either sheet number or sheet name)
@@ -114,6 +117,22 @@ Getting a cell value: GetVal(self, wk_sheet, row, col)
 
 ======================================================================
 
+Setting font and cell colour: setFontColor(self, wk_sheet, row, col, colour)
+			      highlightCell(self, wk_sheet, row, col, colour)
+
+	Input:
+		- wk_sheet = worksheet of the cell you want to modify
+		- row, col = row and column number  e.g A1 = 1, 1
+		- colour to change to. See avaialble colours at the function and adjust accordingly.
+
+	Usage:
+	ExcelOperator(example1).setFontColor("sheet1", 1, 1, 3)
+
+	Expected Result: This will change cell A1 in sheet1's colour to red
+
+
+
+
 Other Functions:
 	QuitExcel(self)
 	RefreshCalculation(self)
@@ -123,8 +142,11 @@ Other Functions:
 	RefreshCalculation(self):
 	MakeVisible(self):
 	Hide(self):
-  
+  	Save(self)
+	SaveAs(self, fileName_With_Location)
+	NewWorkbook(self, fileName_With_Location = "new.csv")
+	turnAlerts(self, alertStatus)
   
  # Future Developments
  - Ability to add and format charts
- - Ability to format fonts etc
+
